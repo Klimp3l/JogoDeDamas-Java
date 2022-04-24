@@ -1,5 +1,4 @@
 public class Table {
-    // create table with 8 rows and 8 columns
     public int[][] table = new int[8][8];
     
     
