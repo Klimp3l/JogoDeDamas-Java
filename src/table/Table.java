@@ -25,9 +25,10 @@ public class Table {
         // Casas bloqueadas = 1
         int[] aux = new int[2];
         aux[0] = 0;
-        aux[1] = 1;
+        aux[1] = -1;
         int x = 1;
 
+        int idPiece = 1;
         // For passando por cada casa do tabuleiro e setando o valor 0 ou 1 começando em 0 e seta as posições iniciais
         // Se a linha for menor que 3 e x = 0 a casa recebe 10 se linha for maior que 4 e x = 0 a casa recebe 11 
         // Quando passa pra próxima linha ele reajusta o valor do x para 1 ou 0 para n ficar igual a linah anterior
@@ -36,10 +37,14 @@ public class Table {
             for (int j = 0; j < 8; j++) {
                 x = (x == 0) ? 1 : 0;
                 if(i < 3 && x == 0) {
-                    this.houseTable[i][j] = 10;
+                    // this.houseTable[i][j] = 10;
+                    this.houseTable[i][j] = pieces.getPiece(idPiece , 0);
+                    idPiece++;
                 }
                 else if(i > 4 && x == 0) {
-                    this.houseTable[i][j] = 11;
+                    // this.houseTable[i][j] = 11;
+                    this.houseTable[i][j] = pieces.getPiece(idPiece , 0);
+                    idPiece++;
                 } else {
                     this.houseTable[i][j] = aux[x];
                 }
@@ -67,6 +72,24 @@ public class Table {
                 if(j == 7) {
                     System.out.print(String.format("  %d", i));
                 }
+            }
+            System.out.println();
+        }
+    }
+
+    // Pega o valor da casa
+    public int gethouseTable(int i, int j) {
+        return this.houseTable[i][j];
+    }
+    // Seta o valor da casa
+    public void sethouseTable(int i, int j, int value) {
+        this.houseTable[i][j] = value;
+    }
+
+    public void debugTable(){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                System.out.print(this.houseTable[i][j] + " ");
             }
             System.out.println();
         }
@@ -159,24 +182,6 @@ public class Table {
             }
         } else {
             System.out.println("Não Há peças sua nessa casa Jogador "+player);
-        }
-    }
-
-    // Pega o valor da casa
-    public int gethouseTable(int i, int j) {
-        return this.houseTable[i][j];
-    }
-    // Seta o valor da casa
-    public void sethouseTable(int i, int j, int value) {
-        this.houseTable[i][j] = value;
-    }
-
-    public void debugTable(){
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print(this.houseTable[i][j] + " ");
-            }
-            System.out.println();
         }
     }
 }

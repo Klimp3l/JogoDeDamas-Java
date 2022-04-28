@@ -33,6 +33,15 @@ public class Pieces {
         }
     }
 
+    // Pega o valor da casa
+    public int getPiece(int i, int j) {
+        return this.piecesOfJogador[i][j];
+    }
+    // Seta o valor da casa
+    public void setPiece(int i, int j, int value) {
+        this.piecesOfJogador[i][j] = value;
+    }
+
     public void debugPieces() {
         for (int i=0; i < 24; i++) {
             for (int j=0; j < 4; j++) {
