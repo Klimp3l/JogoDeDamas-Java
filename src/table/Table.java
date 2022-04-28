@@ -169,13 +169,15 @@ public class Table {
         }
         return x;
     }
-
+    // Jogada Player -> Coordenadas Inciciais e Finas
     public void applyPlayerPlay(int player, char startA, int startY, char endA, int endY){
         int startX = this.convertPosition(startA);
         int endX = this.convertPosition(endA);
         int playerNumber = player == 1 ? 10 : 11;
-        System.out.println("endX" + endX); 
-        System.out.println("endY" + endY);
+
+        // ********* Validar se a casa do destino é do jogador
+        // ********* 
+        
         this.houseTable[endX][endY] = playerNumber;
         this.houseTable[startX][startY] = 0;
         if (startX-endX == 2 || startX-endX == -2) {
