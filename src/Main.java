@@ -3,8 +3,7 @@ import table.Table;
 public class Main {
     // main
 
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) {        
         Table table = new Table();
 
         table.printTableWithPieces();

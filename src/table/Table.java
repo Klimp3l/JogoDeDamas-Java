@@ -1,4 +1,5 @@
 package table;
+import pieces.Pieces;
 
 public class Table {
     // Cores para printar no console
@@ -10,6 +11,7 @@ public class Table {
     private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     private static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
     private int[][] houseTable = new int[8][8];
+    Pieces pieces = new Pieces();
 
     // Executa as funções para criar o tabuleiro
     public Table(){
