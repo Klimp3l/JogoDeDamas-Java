@@ -3,11 +3,10 @@ package pieces;
 public class Pieces {
     // Dois tipos de peças
     // Atributos:
-    // 0 - Id
-    // 1 - Jogador
-    // 2 - Função
-    // 3 - Situação
-    private int[][] piecesOfJogador = new int[24][4];
+    // 0 - Jogador
+    // 1 - Função
+    // 2 - Situação
+    private int[][] piecesOfJogador = new int[25][4];
 
     public Pieces() {
         this.createPieces();
@@ -15,31 +14,45 @@ public class Pieces {
 
     public void createPieces() {
         for (int i=0; i < 24; i++) {
-            for (int j=0; j < 4; j++) {
-                if (j==0) {
-                    // Id
-                    this.piecesOfJogador[i][j] = i+1;
-                } else if (j==1) {
-                    // Jogador
-                    this.piecesOfJogador[i][j] = i < 12 ? 10 : 11;
-                } else if (j==2) {
-                    // Funcao -> 0: peão, 1: dama
-                    this.piecesOfJogador[i][j] = 0;
-                } else if (j==3) {
-                    // Situacao -> 0: ativa, 1: inativa
-                    this.piecesOfJogador[i][j] = 0;
+            if (i==0) {
+
+            } else {
+                for (int j=0; j < 4; j++) {
+                    if (j==0) {
+                        // Jogador
+                        this.piecesOfJogador[i][j] = i < 12 ? 1 : 2;
+                    } else if (j==1) {
+                        // Funcao -> 0: peão, 1: dama
+                        this.piecesOfJogador[i][j] = 0;
+                    } else if (j==2) {
+                        // Situacao -> 0: ativa, 1: inativa
+                        this.piecesOfJogador[i][j] = 0;
+                    }
                 }
             }
         }
     }
 
+    // Pega o jogador da peca
+    public int getPlayerPiece(int idPeca) {
+        return getPiece(idPeca, 0);
+    }
     // Pega o valor da casa
     public int getPiece(int i, int j) {
+        return this.piecesOfJogador[i][j];
+    }
+
+    public int getPieceValue(int i, int j) {
         return this.piecesOfJogador[i][j];
     }
     // Seta o valor da casa
     public void setPiece(int i, int j, int value) {
         this.piecesOfJogador[i][j] = value;
+    }
+
+    // Valida se a peça é de quem ta jogando e se as posições passadas são validas
+    public boolean validatePiece(int playerNumber, int idPeca){
+        return getPiece(idPeca, 0) == playerNumber && getPiece(idPeca, 2) == 0;
     }
 
     public void debugPieces() {
