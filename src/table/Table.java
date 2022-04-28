@@ -14,7 +14,6 @@ public class Table {
     // Executa as funções para criar o tabuleiro
     public Table(){
         this.createTable();
-        this.createTablePosition();
     }
 
     // Cria o Tabuleiro e define as casas válidas
@@ -27,31 +26,25 @@ public class Table {
         aux[1] = 1;
         int x = 1;
 
-        // For passando por cada casa do tabuleiro e setando o valor 0 ou 1 começando em 0
+        // For passando por cada casa do tabuleiro e setando o valor 0 ou 1 começando em 0 e seta as posições iniciais
+        // Se a linha for menor que 3 e x = 0 a casa recebe 10 se linha for maior que 4 e x = 0 a casa recebe 11 
         // Quando passa pra próxima linha ele reajusta o valor do x para 1 ou 0 para n ficar igual a linah anterior
         for (int i = 0; i < 8; i++) {
             x = (i % 2 == 0) ?  1 : 0;
             for (int j = 0; j < 8; j++) {
                 x = (x == 0) ? 1 : 0;
-                this.houseTable[i][j] = aux[x];
-            }
-        }
-    }
-    // Coloca as posições inciais de cada jogador no tabuleiro
-    private void createTablePosition() {
-        // Para linha < 3 as peças de número 10 ocuparão as casas de valor 10
-        // Para linha > 4 as peças de número 11 ocuparão as casas de valor 10
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if(i < 3 && this.houseTable[i][j] == 0) {
+                if(i < 3 && x == 0) {
                     this.houseTable[i][j] = 10;
                 }
-                if(i > 4 && houseTable[i][j] == 0) {
+                else if(i > 4 && x == 0) {
                     this.houseTable[i][j] = 11;
+                } else {
+                    this.houseTable[i][j] = aux[x];
                 }
             }
         }
     }
+    
     // Printa os Tabuleiros com as peças
     public void printTableWithPieces(){
         // Printa a primeira para localizar das coordenadas x
@@ -59,9 +52,6 @@ public class Table {
         System.out.println("  A   B   C   D   E   F   G   H");
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if(j == 7) {
-                    System.out.print(String.format("  %d", i));
-                }
                 // Valida qual o valor das casa e printa as cores
                 if(this.houseTable[i][j] == 10) {
                     System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_RED + this.houseTable[i][j] + " " + ANSI_RESET);
@@ -72,18 +62,14 @@ public class Table {
                 } else {
                     System.out.print(ANSI_WHITE_BACKGROUND + "    " + ANSI_RESET);
                 }
+                if(j == 7) {
+                    System.out.print(String.format("  %d", i));
+                }
             }
             System.out.println();
         }
     }
-    // Pega o valor da casa
-    public int gethouseTable(int i, int j) {
-        return this.houseTable[i][j];
-    }
-    // Seta o valor da casa
-    public void sethouseTable(int i, int j, int value) {
-        this.houseTable[i][j] = value;
-    }
+
     // Pega o score de cada jogador
     public void getScore(){
         int player1 = 0;
@@ -105,37 +91,7 @@ public class Table {
         System.out.println("Player 1: " + player1);
         System.out.println("Player 2: " + player2);
     }
-    // Valida a posição da jogada
-    public boolean validatePosition(char startA, int startY, char endA, int endY){
-        int startX = this.convertPosition(startA);
-        int endX = this.convertPosition(endA);   
-
-        // Valida se a posição existe no tabuleiro
-        if (endX - startX > 2 || endX - startX < -2) {
-            return false;
-        }
-        if (endY - startY > 2 || endY - startY < -2) {
-            return false;
-        }
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if(this.houseTable[i][j] > 2) {
-                    return false;
-                }
-            }
-        }
-        return (endX %2 == 0 && endY %2 == 0);
-    }
-    // Valida de quem é a peça
-    public boolean validatePiece(int player, char a, int y){      
-        int playerNumber = player == 1 ? 10 : 11;
-        int x = this.convertPosition(a);
-        if (x < 0 || x > 7 || y < 0 || y > 7) {
-            return false;
-        }
-        return this.houseTable[x][y] == playerNumber;
-    }
+    
     // Convert a posicao das letras para número
     public int convertPosition(char a){
         int x = 0;
@@ -169,22 +125,48 @@ public class Table {
         }
         return x;
     }
+    
+    // Valida a posição da jogada
+    public boolean validatePosition(int playerNumber, int endY, int endX) {
+        if (gethouseTable(endY,endX) == playerNumber) {
+            return false;
+        }
+        return (gethouseTable(endY, endX) == 0);
+    }
+    
+    // Valida se a peça é de quem ta jogando e se as posições passadas são validas
+    public boolean validatePiece(int playerNumber, int y, int x){
+        if (y < 0 || y > 7 || x < 0 || x > 7) {
+            return false;
+        }
+        return gethouseTable(y, x) == playerNumber;
+    }
+    
     // Jogada Player -> Coordenadas Inciciais e Finas
     public void applyPlayerPlay(int player, char startA, int startY, char endA, int endY){
         int startX = this.convertPosition(startA);
         int endX = this.convertPosition(endA);
         int playerNumber = player == 1 ? 10 : 11;
 
-        // ********* Validar se a casa do destino é do jogador
-        // ********* 
-        
-        this.houseTable[endX][endY] = playerNumber;
-        this.houseTable[startX][startY] = 0;
-        if (startX-endX == 2 || startX-endX == -2) {
-            if (this.houseTable[(startX+endX)/2][(startY+endY)/2] != playerNumber){                
-                this.houseTable[(startX+endX)/2][(startY+endY)/2] = 0;
+        if (validatePiece(playerNumber, startY, startX)) {
+            if (validatePosition(playerNumber, endY, endX)) {
+                sethouseTable(startY, startX, 0);
+                sethouseTable(endY, endX, playerNumber);
+            } else {
+                System.out.println("A posição destino não é valida Jogador "+player);
             }
-        } 
+        } else {
+            System.out.println("Não Há peças sua nessa casa Jogador "+player);
+        }
+    }
+
+    // Pega o valor da casa
+    public int gethouseTable(int i, int j) {
+        return this.houseTable[i][j];
+    }
+    // Seta o valor da casa
+    public void sethouseTable(int i, int j, int value) {
+        this.houseTable[i][j] = value;
     }
 
     public void debugTable(){
@@ -197,3 +179,5 @@ public class Table {
     }
 }
 
+git config --global user.email "bernardokozan@gmail.com"
+  git config --global user.name "Your Name"
