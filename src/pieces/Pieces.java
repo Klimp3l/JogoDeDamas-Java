@@ -20,7 +20,7 @@ public class Pieces {
                 for (int j=0; j < 4; j++) {
                     if (j==0) {
                         // Jogador
-                        this.piecesOfJogador[i][j] = i < 12 ? 1 : 2;
+                        this.piecesOfJogador[i][j] = i < 13 ? 1 : 2;
                     } else if (j==1) {
                         // Funcao -> 0: peão, 1: dama
                         this.piecesOfJogador[i][j] = 0;
@@ -31,6 +31,11 @@ public class Pieces {
                 }
             }
         }
+    }
+
+    // Valida se a peça é de quem ta jogando e se a peça está 'Ativa'
+    public boolean validatePiece(int playerNumber, int idPeca){
+        return getPiece(idPeca, 0) == playerNumber && getPiece(idPeca, 2) == 0;
     }
 
     // Pega o jogador da peca
@@ -48,11 +53,6 @@ public class Pieces {
     // Seta o valor da casa
     public void setPiece(int i, int j, int value) {
         this.piecesOfJogador[i][j] = value;
-    }
-
-    // Valida se a peça é de quem ta jogando e se as posições passadas são validas
-    public boolean validatePiece(int playerNumber, int idPeca){
-        return getPiece(idPeca, 0) == playerNumber && getPiece(idPeca, 2) == 0;
     }
 
     public void debugPieces() {

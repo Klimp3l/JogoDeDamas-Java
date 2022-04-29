@@ -27,22 +27,22 @@ public class Table {
         int x = 1;
 
         int idPiece = 1;
-        // For passando por cada casa do tabuleiro e setando o valor 0 ou 1 começando em 0 e seta as posições iniciais
-        // Se a linha for menor que 3 e x = 0 a casa recebe 10 se linha for maior que 4 e x = 0 a casa recebe 11 
-        // Quando passa pra próxima linha ele reajusta o valor do x para 1 ou 0 para n ficar igual a linah anterior
+        // For passando por cada casa do tabuleiro e setando o valor 0 ou -1 começando em 0 e seta as posições iniciais
+        // Se a linha for menor que 3 e x = 0 e se linha maior que 4 e x = 0 a casa recebe idPeca (Sempre quando atribuir a casa uma peça ele acrescenta um no id auxiliar)
+        // Quando passa pra próxima linha ele reajusta o valor do x para 1 ou 0 para n ficar igual a linha anterior
         for (int i = 0; i < 8; i++) {
             x = (i % 2 == 0) ?  1 : 0;
             for (int j = 0; j < 8; j++) {
                 x = (x == 0) ? 1 : 0;
                 if(i < 3 && x == 0) {
-                    sethouseTable(i, j, idPiece);
+                    setHouseTable(i, j, idPiece);
                     idPiece++;
                 }
                 else if(i > 4 && x == 0) {
-                    sethouseTable(i, j, idPiece);
+                    setHouseTable(i, j, idPiece);
                     idPiece++;
                 } else {
-                    sethouseTable(i, j, aux[x]);
+                    setHouseTable(i, j, aux[x]);
                 }
             }
         }
@@ -56,15 +56,15 @@ public class Table {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 // Valida qual o valor das casa e printa as cores
-                if(gethouseTable(i, j) <= 12 && gethouseTable(i, j) != -1 && gethouseTable(i, j) != 0) {
-                    if (gethouseTable(i, j) < 10) {
-                        System.out.print(ANSI_BLACK_BACKGROUND + "  " + ANSI_RED + gethouseTable(i, j) + " " + ANSI_RESET);
+                if(getHouseTable(i, j) <= 12 && getHouseTable(i, j) != -1 && getHouseTable(i, j) != 0) {
+                    if (getHouseTable(i, j) < 10) {
+                        System.out.print(ANSI_BLACK_BACKGROUND + "  " + ANSI_RED + getHouseTable(i, j) + " " + ANSI_RESET);
                     } else {                        
-                        System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_RED + gethouseTable(i, j) + " " + ANSI_RESET);
+                        System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_RED + getHouseTable(i, j) + " " + ANSI_RESET);
                     }
-                } else if(gethouseTable(i, j) > 12 && gethouseTable(i, j) != -1) {
-                    System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_BLUE + gethouseTable(i, j) + " " + ANSI_RESET);
-                } else if(gethouseTable(i, j) == 0) {
+                } else if(getHouseTable(i, j) > 12 && getHouseTable(i, j) != -1) {
+                    System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_BLUE + getHouseTable(i, j) + " " + ANSI_RESET);
+                } else if(getHouseTable(i, j) == 0) {
                     System.out.print(ANSI_BLACK_BACKGROUND + "    " + ANSI_RESET);
                 } else {
                     System.out.print(ANSI_WHITE_BACKGROUND + "    " + ANSI_RESET);
@@ -81,45 +81,32 @@ public class Table {
     public void setPosition(int idPeca){        
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (gethouseTable(i, j) == idPeca) {
-                    sethouseTable(i, j, 0);
+                if (getHouseTable(i, j) == idPeca) {
+                    setHouseTable(i, j, 0);
                 }
             }
         }
     }
 
-    // pegar linha do idPeca
-    public int getPieceLine(int idPeca) { 
-        int line = -1;     
+    // pegar linha ou coluna do idPeca
+    public int getPieceLineOrCollumn(int idPeca, char option) { 
+        int retorno = -1;   
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (gethouseTable(i, j) == idPeca) {
-                    line = i;
+                if (getHouseTable(i, j) == idPeca) {
+                    retorno = option == 'L' ? i : j;
                 }
             }
         }
-        return line;
-    }
-
-    // pegar linha do idPeca
-    public int getPieceCollumn(int idPeca) { 
-        int collumn = -1;     
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (gethouseTable(i, j) == idPeca) {
-                    collumn = j;
-                }
-            }
-        }
-        return collumn;
+        return retorno;
     }
 
     // Pega o valor da casa
-    public int gethouseTable(int i, int j) {
+    public int getHouseTable(int i, int j) {
         return this.houseTable[i][j];
     }
     // Seta o valor da casa
-    public void sethouseTable(int i, int j, int value) {
+    public void setHouseTable(int i, int j, int value) {
         this.houseTable[i][j] = value;
     }
     // Debugar os valores das casas

@@ -6,10 +6,95 @@ public class Play {
     Table table = new Table();
     Pieces pieces = new Pieces();
 
+    // Funções da rodada
     public boolean isGameOver() {
         return false;
     }
+    public int getPlayerTurn(int player){
+        return player %2 == 0 ? 2 : 1;
+    }
+    public void getPlayerName(int player){
+        String playerName = player %2 == 0 ? "Player 2" : "Player 1";
+        System.out.println(String.format("Vez do jogador %s realizar a jogada", playerName));
+    }
 
+    // Jogada Player -> idPiece -> coordenada final
+    public boolean applyPlayerPlay(int player, int idPiece, char endA, int endY) {
+        int endX = this.convertPosition(endA);
+        int lineInitial = table.getPieceLineOrCollumn(idPiece, 'L');
+        int collumnInitial = table.getPieceLineOrCollumn(idPiece, 'C');
+        int lineMedia;
+        int collumnMedia;
+
+        if (pieces.validatePiece(player, idPiece)) {
+            if (validatePosition(player, idPiece, endY, endX)) {
+
+                // Comportamento da peça
+                // 1. Se a peça é Dama
+                // 2. Se a peça é peão
+                if (this.isSuperPiece(idPiece)) {
+                    
+                    // int diffLine = endY - lineInitial;
+                    // int diffColumn = endX - collumnInitial;
+                    // for (int i = lineInitial; i != endY;) {
+                    //     for (int j = collumnInitial; j != endX;) {
+                    //         if (diffLine > 0) {
+                    //             i--;
+                    //             diffLine--;
+                    //         } else if (diffLine < 0) {
+                    //             i++;
+                    //             diffLine++;
+                    //         } else if (diffColumn > 0) {
+                    //             j--;
+                    //             diffColumn--;
+                    //         } else if (diffColumn < 0) {
+                    //             j++;
+                    //             diffColumn++;
+                    //         }
+                    //         if (table.getHouseTable(i, j) != 0 && pieces.getPlayerPiece(table.getHouseTable(i, j)) != player) {
+                    //             // Se comeu tem que retirar a peça do openente;
+                    //             pieces.setPiece(table.getHouseTable(i, j), 2, 1);
+                    //             table.setHouseTable(i, j, 0);
+                    //         }
+                    //     }
+                    // }
+                } else {
+                    // Validar se a peça pulou mais de uma linha 
+                    // 1. se foi 2 linhas
+                    if (Math.abs(lineInitial - endY) == 2 || Math.abs(collumnInitial - endX) == 2) {
+                        lineMedia = (lineInitial + endY) / 2;
+                        collumnMedia = (collumnInitial + endX) / 2;
+
+                        // valida se a casa ado meio contem uma peça
+                        if (table.getHouseTable(lineMedia, collumnMedia) != 0 && pieces.getPlayerPiece(table.getHouseTable(lineMedia, collumnMedia)) != player) {
+                            // Se comeu tem que retirar a peça do openente;
+                            pieces.setPiece(table.getHouseTable(lineMedia, collumnMedia), 2, 1);
+                            table.setHouseTable(lineMedia, collumnMedia, 0);
+
+                            this.playValid(idPiece, endX, endY);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    else {
+                        this.playValid(idPiece, endX, endY);
+                        return true;
+                    }
+                }
+            }
+        } 
+        return false;
+    }
+    
+    // Jogada Valida
+    private void playValid(int idPiece, int endX, int endY) {
+        this.validateSuperPiece(idPiece, endY);
+        table.setPosition(idPiece);
+        table.setHouseTable(endY, endX, idPiece);
+        table.printTableWithPieces();
+    }
+    // Validações da dama
     private void validateSuperPiece(int idPiece, int endY){
         int player = pieces.getPlayerPiece(idPiece);
         if (!this.isSuperPiece(idPiece)){
@@ -21,146 +106,43 @@ public class Play {
             }
         }
     }
-
     private boolean isSuperPiece(int idPiece){
         return pieces.getPiece(idPiece, 1) == 1 ? true : false;
     }
-
     private void setSuperPiece(int idPiece){
         pieces.setPiece(idPiece, 1, 1);
     }
-    
-    // Jogada Player -> Coordenadas Inciciais e Finas
-    public boolean applyPlayerPlay(int player, int idPeca, char endA, int endY){
-        int endX = this.convertPosition(endA);
-        int line = table.getPieceLine(idPeca);
-        int collumn = table.getPieceCollumn(idPeca);
-        int lineMedia = (line + endY) / 2;
-        int collumnMedia = (collumn + endX) / 2;
 
-        // Validar se a peça é do Jogador;
-        if (pieces.validatePiece(player, idPeca)) {           
-            // Validar se a posicao destino é valida
-            if (validatePosition(player, idPeca, endY, endX)) {
-                if (this.isSuperPiece(idPeca)){
-                    // Validar se a linha pulou mais de uma linha e valida se comeu uma peça; se não comeu retorna falso
-                    // if (Math.abs(line - endY) == 2 || Math.abs(collumn - endX) == 2) {
-                    //     // valida se comeu peça
-                    //     if (table.gethouseTable(lineMedia, collumnMedia) != 0 && pieces.getPlayerPiece(table.gethouseTable(lineMedia, collumnMedia)) != player) {
-                    //         // Se comeu tem que retirar a peça do openente;
-                    //         pieces.setPiece(table.gethouseTable(lineMedia, collumnMedia), 2, 1);
-                    //         table.sethouseTable(lineMedia, collumnMedia, 0);
+    // Valida se a Jogada acontecera
+    private boolean validatePosition(int player, int idPiece, int endY, int endX) {
+        int lineInitial = table.getPieceLineOrCollumn(idPiece, 'L');
 
-                    //         table.setPosition(idPeca);
-                    //         this.validateSuperPiece(idPeca, endY);
-                    //         // Setar a coordenada destino com o idPeca
-                    //         table.sethouseTable(endY, endX, idPeca);
-                    //         table.printTableWithPieces();
-                    //         return true;
-                    //     } else {
-                    //         return false;
-                    //     }
-                    //     // Se nao comeu peça retorna falso
-                    // }
-                    // else {
-                    // // Setar a casa inicial como 0
-                    //     table.setPosition(idPeca);
-                    //     // Setar a coordenada destino com o idPeca
-                    //     table.sethouseTable(endY, endX, idPeca);
-                        
-                    //     table.printTableWithPieces();
-                    //     return true;
-                    // }
-                    //inicio line - endY
-                    int diffLine = endY - line;
-                    int diffColumn = endX - collumn;
-                    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-                    for (int i = line; i != endY;) {
-                        for (int j = collumn; j != endX;) {
-                            if (diffLine > 0) {
-                                i--;
-                                diffLine--;
-                            } else if (diffLine < 0) {
-                                i++;
-                                diffLine++;
-                            } else if (diffColumn > 0) {
-                                j--;
-                                diffColumn--;
-                            } else if (diffColumn < 0) {
-                                j++;
-                                diffColumn++;
-                            }
-                            if (table.gethouseTable(i, j) != 0 && pieces.getPlayerPiece(table.gethouseTable(i, j)) != player) {
-                                // Se comeu tem que retirar a peça do openente;
-                                pieces.setPiece(table.gethouseTable(i, j), 2, 1);
-                                table.sethouseTable(i, j, 0);
-                            }
-                        }
-                    }
-                }else{
-                
-                    // Validar se a linha pulou mais de uma linha e valida se comeu uma peça; se não comeu retorna falso
-                    if (Math.abs(line - endY) == 2 || Math.abs(collumn - endX) == 2) {
-                        // valida se comeu peça
-                        if (table.gethouseTable(lineMedia, collumnMedia) != 0 && pieces.getPlayerPiece(table.gethouseTable(lineMedia, collumnMedia)) != player) {
-                            // Se comeu tem que retirar a peça do openente;
-                            pieces.setPiece(table.gethouseTable(lineMedia, collumnMedia), 2, 1);
-                            table.sethouseTable(lineMedia, collumnMedia, 0);
-
-                            table.setPosition(idPeca);
-                            this.validateSuperPiece(idPeca, endY);
-                            // Setar a coordenada destino com o idPeca
-                            table.sethouseTable(endY, endX, idPeca);
-                            table.printTableWithPieces();
-                            return true;
-                        } else {
-                            return false;
-                        }
-                        // Se nao comeu peça retorna falso
-                    }
-                    else {
-                    // Setar a casa inicial como 0
-                        table.setPosition(idPeca);
-                        // Setar a coordenada destino com o idPeca
-                        table.sethouseTable(endY, endX, idPeca);
-                        
-                        table.printTableWithPieces();
-                        return true;
-                    }
-                }
-            }
-        } 
-        return false;
-    }
-
-    // Valida a posição da jogada
-    public boolean validatePosition(int player, int idPeca, int endY, int endX) {
-        int line = table.getPieceLine(idPeca);
-        int collumn = table.getPieceCollumn(idPeca);
+        // Se alguma das coordenadas for < 0 ou > 7 retorna false
         if (endY < 0 || endY > 7 || endX < 0 || endX > 7) {
             return false;
         }
-        if (!this.isSuperPiece(idPeca)){
+        // Se a peça é um Peão valida quem é o player e se a direção é válida
+        if (!this.isSuperPiece(idPiece)) {
             if (player == 1 ) {
-                if (line > endY){
+                if (lineInitial > endY){
                     return false;
                 }
             } else {
-                if (line < endY){
+                if (lineInitial < endY){
                     return false;
                 }
             }
         }
-       
-        if (table.gethouseTable(endY,endX) == 0) {
+        // Se o destino é uma casa válida
+        if (table.getHouseTable(endY,endX) == 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    // Convert a posicao das letras para número
-    public int convertPosition(char a){
+    // Converte a posicao das letras para número
+    private int convertPosition(char a){
         int x = 0;
         switch (a) {
             case 'A':
@@ -191,14 +173,5 @@ public class Play {
                 break;
         }
         return x;
-    }
-
-    public int getPlayerTurn(int player){
-        return player %2 == 0 ? 2 : 1;
-    }
-
-    public void getPlayerName(int player){
-        String playerName = player %2 == 0 ? "Player 2" : "Player 1";
-        System.out.println(String.format("Vez do jogador %s realizar a jogada", playerName));
     }
 }
