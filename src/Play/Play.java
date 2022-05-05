@@ -25,6 +25,9 @@ public class Play {
         int collumnInitial = table.getPieceLineOrCollumn(idPiece, 'C');
         int lineMedia;
         int collumnMedia;
+        int startY = lineInitial;
+        int startX = collumnInitial;
+        
 
         if (pieces.validatePiece(player, idPiece)) {
             if (validatePosition(player, idPiece, endY, endX)) {
@@ -33,31 +36,41 @@ public class Play {
                 // 1. Se a peça é Dama
                 // 2. Se a peça é peão
                 if (this.isSuperPiece(idPiece)) {
+                    //matriz da xuxa
+                    //pegar maior linha e coluna
+                    int maxLine = Math.max(startX, endX);                    
+                    int minLine = Math.min(startX, endX);
+                    int maxCollumn = Math.max(startY, endY);
+                    int minCollumn = Math.min(startY, endY);
+                    //System.out.println(String.format("\nMaxLine: %d\nMinLine: %d\nMaxCollumn: %d\nMinCollumn: %d", maxLine, minLine, maxCollumn, minCollumn));
+                    //verificar se a peça está na diagonal
+                    //percorrendo a matriz
+
+                    int j = minCollumn+1;
+                    for (int i = minLine+1; i < maxLine; i++) {                        
+                        if (pieces.getPlayerPiece(table.getHouseTable(j, i)) == player) {
+                            return false;
+                        }
+                        j++;                        
+                    }
+
+                    j = minCollumn;
+                    for (int i = minLine; i < maxLine; i++) {
+                        
+                        if (table.getHouseTable(j, i) != 0 && pieces.getPlayerPiece(table.getHouseTable(j, i)) != player) {
+                            pieces.setPiece(table.getHouseTable(j, i), 2, 1);
+                            table.setHouseTable(j, i, 0);
+
+                        }
+
+                        j++;
+                        
+                    }
+
                     
-                    // int diffLine = endY - lineInitial;
-                    // int diffColumn = endX - collumnInitial;
-                    // for (int i = lineInitial; i != endY;) {
-                    //     for (int j = collumnInitial; j != endX;) {
-                    //         if (diffLine > 0) {
-                    //             i--;
-                    //             diffLine--;
-                    //         } else if (diffLine < 0) {
-                    //             i++;
-                    //             diffLine++;
-                    //         } else if (diffColumn > 0) {
-                    //             j--;
-                    //             diffColumn--;
-                    //         } else if (diffColumn < 0) {
-                    //             j++;
-                    //             diffColumn++;
-                    //         }
-                    //         if (table.getHouseTable(i, j) != 0 && pieces.getPlayerPiece(table.getHouseTable(i, j)) != player) {
-                    //             // Se comeu tem que retirar a peça do openente;
-                    //             pieces.setPiece(table.getHouseTable(i, j), 2, 1);
-                    //             table.setHouseTable(i, j, 0);
-                    //         }
-                    //     }
-                    // }
+                    this.playValid(idPiece, endX, endY);
+                    return true;
+                   
                 } else {
                     // Validar se a peça pulou mais de uma linha 
                     // 1. se foi 2 linhas
