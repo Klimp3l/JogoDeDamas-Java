@@ -39,15 +39,15 @@ public class Play {
                     //matriz da xuxa
                     //pegar maior linha e coluna
                     int maxLine = Math.max(startX, endX);                    
-                    int minLine = Math.min(startX, endX);
+                    int minLine = Math.min(startX, endX) + 1;
                     int maxCollumn = Math.max(startY, endY);
-                    int minCollumn = Math.min(startY, endY);
+                    int minCollumn = Math.min(startY, endY) + 1;
                     //System.out.println(String.format("\nMaxLine: %d\nMinLine: %d\nMaxCollumn: %d\nMinCollumn: %d", maxLine, minLine, maxCollumn, minCollumn));
                     //verificar se a peça está na diagonal
                     //percorrendo a matriz
 
-                    int j = minCollumn+1;
-                    for (int i = minLine+1; i < maxLine; i++) {                        
+                    int j = minCollumn;
+                    for (int i = minLine; i < maxLine; i++) {                        
                         if (pieces.getPlayerPiece(table.getHouseTable(j, i)) == player) {
                             return false;
                         }
