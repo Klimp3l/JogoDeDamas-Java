@@ -6,12 +6,12 @@ public class Main {
     public static void main(String[] args) throws Exception{
         int player = 1;
         Play play = new Play();
-        Table table = new Table();
+        Table table = new Table(play);
         Scanner scanner = new Scanner(System.in);        
 
         table.printTableWithPieces();
         
-        while (!play.isGameOver()){
+        while (!play.isGameOver(table)){
             int playerTurn = play.getPlayerTurn(player);
             play.getPlayerName(player);
             
@@ -32,7 +32,7 @@ public class Main {
             } while(idPiece == -1);
 
             
-            System.out.print("Informe o número coluna: ");
+            System.out.print("Informe a letra da coluna: ");
             do {
                 if (!scanner.hasNextInt()){
                     coluna = scanner.next().toUpperCase().charAt(0);

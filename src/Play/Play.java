@@ -3,12 +3,26 @@ import table.*;
 import pieces.*;
 
 public class Play {
-    Table table = new Table();
+    Table table = new Table(this);
     Pieces pieces = new Pieces();
 
     // Funções da rodada
-    public boolean isGameOver() {
-        return false;
+    public boolean isGameOver(Table t) {
+        int firstPlayerTotalPieces = 0;
+        int secondPlayerTotalPieces = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (t.getHouseTable(i, j) != -1){
+                    if (pieces.getPlayerPiece(t.getHouseTable(i,j)) == 1) {
+                        firstPlayerTotalPieces++;
+                    } else if (pieces.getPlayerPiece(t.getHouseTable(i,j)) == 2) {
+                        secondPlayerTotalPieces++;
+                    }
+                }
+                
+            }
+        }
+        return (firstPlayerTotalPieces == 0 || secondPlayerTotalPieces == 0);
     }
     public int getPlayerTurn(int player){
         return player %2 == 0 ? 2 : 1;
@@ -74,6 +88,11 @@ public class Play {
                 } else {
                     // Validar se a peça pulou mais de uma linha 
                     // 1. se foi 2 linhas
+
+                    if (lineInitial - endY > 2 || endY - lineInitial > 2) {
+                        return false;
+                    }
+                    
                     if (Math.abs(lineInitial - endY) == 2 || Math.abs(collumnInitial - endX) == 2) {
                         lineMedia = (lineInitial + endY) / 2;
                         collumnMedia = (collumnInitial + endX) / 2;
@@ -119,7 +138,7 @@ public class Play {
             }
         }
     }
-    private boolean isSuperPiece(int idPiece){
+    public boolean isSuperPiece(int idPiece){
         return pieces.getPiece(idPiece, 1) == 1 ? true : false;
     }
     private void setSuperPiece(int idPiece){

@@ -23,7 +23,7 @@ public class Pieces {
                         this.piecesOfJogador[i][j] = i < 13 ? 1 : 2;
                     } else if (j==1) {
                         // Funcao -> 0: peão, 1: dama
-                        this.piecesOfJogador[i][j] = 1;
+                        this.piecesOfJogador[i][j] = 0;
                     } else if (j==2) {
                         // Situacao -> 0: ativa, 1: inativa
                         this.piecesOfJogador[i][j] = 0;

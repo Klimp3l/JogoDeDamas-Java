@@ -1,5 +1,5 @@
 package table;
-
+import Play.Play;
 public class Table {
     // Cores para printar no console
     // Red -> Jogador 1
@@ -10,9 +10,11 @@ public class Table {
     private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     private static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
     private int[][] houseTable = new int[8][8];
+    private Play play;
     
     // Executa as funções para criar o tabuleiro
-    public Table(){
+    public Table(Play play){
+        this.play = play;
         this.createTable();
     }
     
@@ -52,22 +54,22 @@ public class Table {
     public void printTableWithPieces(){
         // Printa a primeira para localizar das coordenadas x
         // E se a coluna ('j') for 7 printa o número da linha ('i')
-        System.out.println("  A   B   C   D   E   F   G   H");
+        System.out.println("  A    B    C    D    E    F    G    H");
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 // Valida qual o valor das casa e printa as cores
                 if(getHouseTable(i, j) <= 12 && getHouseTable(i, j) != -1 && getHouseTable(i, j) != 0) {
-                    if (getHouseTable(i, j) < 10) {
-                        System.out.print(ANSI_BLACK_BACKGROUND + "  " + ANSI_RED + getHouseTable(i, j) + " " + ANSI_RESET);
+                    if (getHouseTable(i, j) < 10) {                          
+                        System.out.print(ANSI_BLACK_BACKGROUND + "  " + ANSI_RED + getPrintPiece(i, j) + ANSI_RESET);
                     } else {                        
-                        System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_RED + getHouseTable(i, j) + " " + ANSI_RESET);
+                        System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_RED + getPrintPiece(i, j) + ANSI_RESET);
                     }
                 } else if(getHouseTable(i, j) > 12 && getHouseTable(i, j) != -1) {
-                    System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_BLUE + getHouseTable(i, j) + " " + ANSI_RESET);
+                    System.out.print(ANSI_BLACK_BACKGROUND + " " + ANSI_BLUE + getPrintPiece(i, j) + ANSI_RESET);
                 } else if(getHouseTable(i, j) == 0) {
-                    System.out.print(ANSI_BLACK_BACKGROUND + "    " + ANSI_RESET);
+                    System.out.print(ANSI_BLACK_BACKGROUND + "     " + ANSI_RESET);
                 } else {
-                    System.out.print(ANSI_WHITE_BACKGROUND + "    " + ANSI_RESET);
+                    System.out.print(ANSI_WHITE_BACKGROUND + "     " + ANSI_RESET);
                 }
                 if (j == 7) {
                     System.out.print(String.format("  %d", i));
@@ -108,6 +110,19 @@ public class Table {
     // Seta o valor da casa
     public void setHouseTable(int i, int j, int value) {
         this.houseTable[i][j] = value;
+    }
+
+    public String getPrintPiece(int i, int j)
+    {
+        int idPiece= getHouseTable(i, j);
+        boolean isSuperPiece = this.play.isSuperPiece(idPiece);
+        if(isSuperPiece){
+            return String.format("[%d]",idPiece);
+        }else{
+            return String.format(" %d ",idPiece);
+        }
+
+
     }
     // Debugar os valores das casas
     public void debugTable(){
