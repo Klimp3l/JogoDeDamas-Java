@@ -3,70 +3,71 @@ import table.*;
 import Play.*;
 
 public class Main {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         int player = 1;
         Play play = new Play();
         Table table = new Table(play);
-        Scanner scanner = new Scanner(System.in);        
+        Scanner scanner = new Scanner(System.in);
 
         table.printTableWithPieces();
-        
-        while (!play.isGameOver(table)){
+
+        while (!play.isGameOver(table)) {
             int playerTurn = play.getPlayerTurn(player);
             play.getPlayerName(player);
-            
+
             printInstructions();
             int idPiece = -1;
             char coluna = '0';
             int linha = -1;
             System.out.print("\nInforme o número da peça: ");
             do {
-                if (scanner.hasNextInt()){
+                if (scanner.hasNextInt()) {
                     idPiece = scanner.nextInt();
                     scanner.nextLine();
-                } else{
+                } else {
                     System.out.println("\nJogada Inválida! ");
                     System.out.print("Informe o número da peça(apenas números): ");
                     scanner.nextLine();
                 }
-            } while(idPiece == -1);
+            } while (idPiece == -1);
 
-            
             System.out.print("Informe a letra da coluna: ");
             do {
-                if (!scanner.hasNextInt()){
+                if (!scanner.hasNextInt()) {
                     coluna = scanner.next().toUpperCase().charAt(0);
                     scanner.nextLine();
-                } else{
+                } else {
                     System.out.println("Jogada Inválida! ");
                     System.out.print("\nInforme o nome coluna(apenas 1 letra): ");
                     scanner.nextLine();
                 }
-            } while(coluna == '0');
+            } while (coluna == '0');
 
             System.out.print("Informe o número linha: ");
             do {
-                if (scanner.hasNextInt()){
+                if (scanner.hasNextInt()) {
                     linha = scanner.nextInt();
                     scanner.nextLine();
-                } else{
+                } else {
                     System.out.println("Jogada Inválida! ");
                     System.out.print("\nInforme o número da linha(apenas números): ");
                     scanner.nextLine();
                 }
-            } while(linha == -1);
+            } while (linha == -1);
 
             if (play.applyPlayerPlay(playerTurn, idPiece, coluna, linha)) {
                 player++;
             } else {
                 System.out.println("Jogada inválida, tente novamente");
             }
-            
+
         }
-        
+
+        player--;
+        System.out.println("\nFim de jogo! O vencedor é o jogador " + player);
     }
 
-    public static void printInstructions(){
+    public static void printInstructions() {
         System.out.println("\nPor favor digite sua jogada:");
         System.out.println("Informando Número da peça, coluna e linha");
     }
